@@ -7,9 +7,6 @@ public class TCPClient {
     private static final int BASE_PORT = 7896;
     private static final String HOSTNAME = "localhost";
 
-    //We need this to send messages into dictionary.
-    private static final int MAX_BUFFER = 1000;
-
     //Client data.
     private Socket socket;
     private DataInputStream input;

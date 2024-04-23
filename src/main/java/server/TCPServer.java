@@ -135,8 +135,16 @@ public class TCPServer {
         try {
             while (true) {
                 Socket clientSocket = socket.accept();
-                //TODO: Change this logic.
                 TCPConnection conn = new TCPConnection(clientSocket);
+                //Data sent by the client.
+                String data = conn.getData();
+
+                //Parse data.
+                List<String> contents = ParseHelpers.parseContents(data);
+                String serviceResponse = handleServices(contents);
+
+                conn.setResponse(serviceResponse);
+                conn.start();
             }
         }
         catch (IOException e) {
