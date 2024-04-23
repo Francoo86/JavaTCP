@@ -12,40 +12,30 @@ public class TCPConnection extends Thread {
     DataOutputStream output;
     Socket socket;
     private String response;
+    //Coupled ahh thing, thanks deadline!!!!
+    private TCPServer server;
     public static final String BAD_DATA = "INVALID_DATA";
 
-    public TCPConnection(Socket socket) {
+    public TCPConnection(Socket clientSocket, TCPServer server) {
         try {
-            this.socket = socket;
-            input = new DataInputStream(this.socket.getInputStream());
-            output = new DataOutputStream(this.socket.getOutputStream());
-            //this.start();
+            socket = clientSocket;
+            input = new DataInputStream(clientSocket.getInputStream());
+            output = new DataOutputStream(clientSocket.getOutputStream());
+            this.server = server;
+            this.start();
         } catch (IOException e) {
             System.out.println("Listening: " + e.getMessage());
         }
     }
 
-    public void setResponse(String response) {
-        this.response = response;
-    }
-
-    public String getData() {
-        try {
-            return input.readUTF();
-        }
-        catch (IOException e) {
-            System.out.println("TCPConnection: Can't get the client data. Reason: " +  e.getMessage());
-        }
-
-        return BAD_DATA;
-    }
-
-    @Override
     public void run() {
         try {
-            //String data = input.readUTF();
-            output.writeUTF(response);
-            socket.close();
+            while(true) {
+                String data = input.readUTF();
+                String servResponse = server.getParsedResponse(data);
+                output.writeUTF(servResponse);
+                //System.out.println("Received data:" + data);
+            }
         }
         //TODO: Change these generic messages.
         catch (EOFException e){
@@ -53,6 +43,15 @@ public class TCPConnection extends Thread {
         }
         catch (IOException e) {
             System.out.println("IO: " + e.getMessage());
+        }
+        finally {
+            try{
+                System.out.println("Closing client socket on server!!!");
+                socket.close();
+            }
+            catch (IOException e) {
+                System.out.println("IO: " + e.getMessage());
+            }
         }
     }
 }
