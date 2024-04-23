@@ -10,20 +10,17 @@ import shd_utils.ParseHelpers;
 import shd_utils.Services;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.SocketException;
+import java.net.*;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
 public class TCPServer {
-    private DatagramSocket socket;
+    private ServerSocket socket;
     //setup services.
     private DictionaryService dictService;
     private CurrencyService currencyService;
 
-    public static final int MAX_BYTES = 1000;
     //inmutable ahh array.
     private static final Services[] services = Services.values();
 
@@ -34,16 +31,15 @@ public class TCPServer {
 
     public TCPServer(String url, int port) {
         try {
-            socket = new DatagramSocket(port);
+            socket = new ServerSocket(port);
             ConnectionSource source = new JdbcConnectionSource(url);
-
 
             dictService = new DictionaryService(source);
             currencyService = new CurrencyService();
 
             System.out.printf("Setting up server at port %s.\n", port);
         }
-        catch (SocketException e) {
+        catch (IOException e) {
             System.out.printf("[SERVER] Socket (at port %s): %s\n", port, e.getMessage());
         }
         catch (SQLException e) {
@@ -138,20 +134,9 @@ public class TCPServer {
 
         try {
             while (true) {
-                byte[] buffer = new byte[MAX_BYTES];
-                //Escuchar clientes.
-                DatagramPacket req = new DatagramPacket(buffer, MAX_BYTES);
-                socket.receive(req);
-
-                //Mensaje recibido.
-                String receivedMessage = new String(req.getData());
-                List<String> contents = ParseHelpers.parseContents(receivedMessage);
-                String serviceResponse = handleServices(contents);
-
-                System.out.println("Data: " + serviceResponse);
-                System.out.println("Response size: " + serviceResponse.length());
-                DatagramPacket resp = new DatagramPacket(serviceResponse.getBytes(), serviceResponse.length(), req.getAddress(), req.getPort());
-                socket.send(resp);
+                Socket clientSocket = socket.accept();
+                //TODO: Change this logic.
+                TCPConnection conn = new TCPConnection(clientSocket);
             }
         }
         catch (IOException e) {
