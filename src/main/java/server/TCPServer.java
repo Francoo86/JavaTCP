@@ -124,6 +124,12 @@ public class TCPServer {
         };
     }
 
+    public String getParsedResponse(String utfData){
+        List<String> contents = ParseHelpers.parseContents(utfData);
+        String serviceResponse = handleServices(contents);
+        return serviceResponse;
+    }
+
     public void listenClients() {
         if (socket == null) {
             System.out.println("[SERVER] Socket not initialized properly, ending program...");
@@ -135,16 +141,7 @@ public class TCPServer {
         try {
             while (true) {
                 Socket clientSocket = socket.accept();
-                TCPConnection conn = new TCPConnection(clientSocket);
-                //Data sent by the client.
-                String data = conn.getData();
-
-                //Parse data.
-                List<String> contents = ParseHelpers.parseContents(data);
-                String serviceResponse = handleServices(contents);
-
-                conn.setResponse(serviceResponse);
-                conn.start();
+                TCPConnection conn = new TCPConnection(clientSocket, this);
             }
         }
         catch (IOException e) {
