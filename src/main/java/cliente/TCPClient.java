@@ -4,22 +4,30 @@ import java.io.*;
 
 public class TCPClient {
     //TODO: Make the host and port usable by env.
-    private static final int BASE_PORT = 7000;
+    private static final int BASE_PORT = 7896;
     private static final String HOSTNAME = "localhost";
 
     //We need this to send messages into dictionary.
     private static final int MAX_BUFFER = 1000;
 
     //Client data.
-    private DatagramSocket socket;
+    private Socket socket;
+    private DataInputStream input;
+    private DataOutputStream output;
 
     public TCPClient() {
         try {
-            socket = new DatagramSocket();
-            socket.setSoTimeout(5000);
+            socket = new Socket(HOSTNAME, BASE_PORT);
+            input = new DataInputStream(socket.getInputStream());
+            output = new DataOutputStream(socket.getOutputStream());
+            //socket.setSoTimeout(5000);
         }
         catch (SocketException e) {
             System.out.println("Can't initialize socket!!! Aborting...");
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -27,19 +35,12 @@ public class TCPClient {
         try {
             //clear the message.
             message = message.trim();
-            InetAddress address = InetAddress.getByName(HOSTNAME);
-            DatagramPacket req = new DatagramPacket(message.getBytes(), message.length(), address, BASE_PORT);
 
             //Sends the request.
-            socket.send(req);
+            output.writeUTF(message);
 
-            byte[] buff = new byte[MAX_BUFFER];
-            DatagramPacket resp = new DatagramPacket(buff, MAX_BUFFER);
-
-            //if any response.
-            socket.receive(resp);
-
-            return new String(resp.getData());
+            //if any response
+            return input.readUTF();
         }
         catch(IOException e) {
             System.out.printf("IOError: %s", e);
@@ -49,6 +50,11 @@ public class TCPClient {
     }
 
     public void closeConn() {
-        socket.close();
+        try{
+            socket.close();
+        }
+        catch (IOException e) {
+            System.out.println("Can't close connection, reason: " + e.getMessage());
+        }
     }
 }
