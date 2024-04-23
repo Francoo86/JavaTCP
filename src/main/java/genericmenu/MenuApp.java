@@ -98,6 +98,10 @@ public class MenuApp {
         System.out.println(resp);
     }
 
+    public void prepareFileInput() {
+        //TODO: Implement.
+    }
+
     //you can't return onto while true without breaking it.
     //returns true to stop.
     private boolean doOptions() {
