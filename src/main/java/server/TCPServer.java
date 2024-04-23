@@ -120,6 +120,7 @@ public class TCPServer {
             case SEARCH_WORD -> formatLookupWordResp(contents.get(0));
             case ADD_MEANING -> formatAddDictionary(contents.get(0), contents.get(1));
             case CHANGE_CURRENCY -> formatCurrencyResponse(contents);
+            case PDF_SERVICE -> "TODO";
             default -> "NOT_IMPLEMENTED";
         };
     }

@@ -124,6 +124,8 @@ public class MenuApp {
             case CHANGE_CURRENCY:
                 prepareCurrencies();
                 break;
+            case PDF_SERVICE:
+                break;
             //HACK: Add this for avoiding thinking too much.
             case NULL_SERVICE:
                 System.out.println("Saliendo del menu...");
