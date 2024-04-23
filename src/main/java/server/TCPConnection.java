@@ -6,6 +6,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 
+//listener for client?
 public class TCPConnection extends Thread {
     DataInputStream input;
     DataOutputStream output;
