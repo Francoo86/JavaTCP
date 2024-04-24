@@ -1,5 +1,7 @@
 package genericmenu;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import server.services.CurrencyService;
 import cliente.TCPClient;
 import shd_utils.ParseHelpers;
@@ -55,9 +57,20 @@ public class MenuApp {
         }
 
         File selected = chooserPDF.getFile();
-        String path = selected.getAbsolutePath();
+        System.out.println("Nombre de archivo nuevo: (Dejar en blanco si desea conservar)");
+        String word = sc.next().trim();
+        String advancedName = selected.getName();
 
-        System.out.println("Datos del archivo: " + path);
+        if(word.length() > 0) {
+            String ext = FilenameUtils.getExtension(advancedName);
+            advancedName = word + "." + ext;
+        }
+
+        System.out.println("El nombre para el archivo será: " + advancedName);
+        String content = ParseHelpers.createContents(Services.PDF_UPLOAD_SERVICE, advancedName);
+
+        String response = client.sendInput(content, selected);
+        System.out.println("Estado del archivo: " + response);
     }
 
     private void prepareWordSearch() {
@@ -155,7 +168,7 @@ public class MenuApp {
             case CHANGE_CURRENCY:
                 prepareCurrencies();
                 break;
-            case PDF_SERVICE:
+            case PDF_UPLOAD_SERVICE:
                 sendPDF();
                 break;
             //HACK: Add this for avoiding thinking too much.
