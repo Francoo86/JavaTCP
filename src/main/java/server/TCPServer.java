@@ -11,6 +11,7 @@ import shd_utils.ParseHelpers;
 import shd_utils.Services;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
 import java.sql.SQLException;
@@ -27,9 +28,14 @@ public class TCPServer {
     //inmutable ahh array.
     private static final Services[] services = Services.values();
 
-    private Services getService(String num) {
+    public Services getService(String num) {
         int castNum = Integer.parseInt(num);
         return services[castNum];
+    }
+
+    public List<String> getInfo(String data) {
+        List<String> contents = ParseHelpers.parseContents(data);
+        return contents;
     }
 
     public TCPServer(String url, int port) {
@@ -159,5 +165,14 @@ public class TCPServer {
         catch (IOException e) {
             System.out.println("[SERVER] Socket (IO): " + e.getMessage());
         }
+    }
+
+    public String getParsedResponse(String data, DataOutputStream output) {
+        boolean wasSentSuccess = fileService.sendFileToClient(output, data);
+        if(!wasSentSuccess) {
+            return "FS => The file can't be sent.";
+        }
+
+        return "The " + data + " has been sent succesfully.";
     }
 }
