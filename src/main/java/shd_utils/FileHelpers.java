@@ -39,10 +39,7 @@ public class FileHelpers {
                 return searchFileRecursive(fileEntry, target, ext);
             }
 
-            String fileNameNoExt = FilenameUtils.removeExtension(fileEntry.getName());
-            String currentExt = FilenameUtils.getExtension(fileEntry.getName());
-
-            if(fileNameNoExt.equals(target) && currentExt.equals(ext)) {
+            if(fileEntry.getName().equals(target)) {
                 return fileEntry;
             }
         }
