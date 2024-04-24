@@ -1,4 +1,6 @@
 package cliente;
+import shd_utils.FileHelpers;
+
 import java.net.*;
 import java.io.*;
 
@@ -7,6 +9,7 @@ public class TCPClient {
     private static final int BASE_PORT = 7896;
     private static final String HOSTNAME = "localhost";
     private static final int BUFFER_SIZE = 4096;
+    private static final String DOWNLOADS_PATH = "downloads/";
 
     //Client data.
     private Socket socket;
@@ -18,10 +21,11 @@ public class TCPClient {
             socket = new Socket(HOSTNAME, BASE_PORT);
             input = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
-            //socket.setSoTimeout(5000);
+
+            socket.setSoTimeout(5000);
         }
         catch (SocketException e) {
-            System.out.println("Can't initialize socket!!! Aborting...");
+            System.out.println("Socket Error: " + e.getMessage());
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -89,6 +93,46 @@ public class TCPClient {
         catch (IOException e) {
             System.out.println("TCPClient: Error with " + file.getName() + ". Reason => " + e.getMessage());
         }
+    }
+
+    public String downloadFile(String contents, String fileName) {
+        try {
+            //output.writeInt(fileName.length());
+            FileHelpers.createDirIfNotExists(DOWNLOADS_PATH);
+            output.writeUTF(contents);
+
+            long fileLength = input.readLong();
+            if (fileLength == -1) {
+                System.out.println("File not found on server.");
+                return "";
+            }
+
+            FileOutputStream fileOutputStream = new FileOutputStream(DOWNLOADS_PATH + fileName);
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int bytesRead;
+            long totalBytesRead = 0;
+
+            while (totalBytesRead < fileLength && (bytesRead = input.read(buffer)) > 0) {
+                fileOutputStream.write(buffer, 0, bytesRead);
+                totalBytesRead += bytesRead;
+            }
+
+            fileOutputStream.close();
+            System.out.println("File downloaded successfully.");
+
+            if(input.available() > 0){
+                return input.readUTF();
+            }
+            else {
+                System.out.println("NO DATA!!!");
+            }
+
+            return "";
+        } catch (IOException e) {
+            System.out.println("Error downloading file: " + e.getMessage());
+        }
+
+        return "";
     }
 
     public void sendFile(String fileName) {
