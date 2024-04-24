@@ -4,7 +4,7 @@ import shd_utils.FileHelpers;
 
 import java.io.*;
 
-public class FileReceiverService {
+public class FileService {
     private static final int BUFFER_SIZE = 8196;
     private static final String UPLOADS = "uploads/";
 

@@ -6,7 +6,7 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import dao.Word;
 import dao.WordDefinition;
-import server.services.FileReceiverService;
+import server.services.FileService;
 import shd_utils.ParseHelpers;
 import shd_utils.Services;
 
@@ -22,7 +22,7 @@ public class TCPServer {
     //setup services.
     private DictionaryService dictService;
     private CurrencyService currencyService;
-    private FileReceiverService fileReceiverService;
+    private FileService fileService;
 
     //inmutable ahh array.
     private static final Services[] services = Services.values();
@@ -39,7 +39,7 @@ public class TCPServer {
 
             dictService = new DictionaryService(source);
             currencyService = new CurrencyService();
-            fileReceiverService = new FileReceiverService();
+            fileService = new FileService();
 
             System.out.printf("Setting up server at port %s.\n", port);
         }
@@ -136,7 +136,7 @@ public class TCPServer {
         contents.remove(0);
 
         return switch (serv) {
-            case PDF_UPLOAD_SERVICE -> fileReceiverService.fileResponse(input, contents.get(0));
+            case PDF_UPLOAD_SERVICE -> fileService.fileResponse(input, contents.get(0));
             default -> "NOT_IMPLEMENTED";
         };
     }
