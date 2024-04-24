@@ -3,6 +3,8 @@ package genericmenu;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.*;
@@ -43,14 +45,27 @@ public class JFileChooserPDF extends JFrame implements ActionListener {
         add(btn);
 
         acceptBtn = new JButton("Aceptar");
-        btn.setEnabled(false);
+        acceptBtn.setEnabled(false);
         add(acceptBtn);
 
         acceptBtn.addActionListener(e1 -> {
             // Insert code here
+            setFinished(true);
             setVisible(false);
             dispose();
         });
+
+        addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e){
+                System.out.println("The PDF window was closed!!!");
+                setFinished(true);
+                dispose();
+            }
+        });
+    }
+
+    public void setFinished(boolean finished){
+        finishSelection = finished;
     }
 
     public boolean hasFinishedSelection(){
@@ -70,6 +85,8 @@ public class JFileChooserPDF extends JFrame implements ActionListener {
         if (result == JFileChooser.APPROVE_OPTION) {
             selectedFile = fileChooser.getSelectedFile();
             txt.setText(selectedFile.getAbsolutePath());
+            acceptBtn.setEnabled(true);
+            System.out.println(selectedFile.getAbsolutePath());
             //return true;
         } else {
             selectedFile = null;
