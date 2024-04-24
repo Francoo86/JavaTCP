@@ -3,6 +3,8 @@ package shd_utils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileHelpers {
     public static boolean createDirIfNotExists(String dir) {
@@ -44,5 +46,23 @@ public class FileHelpers {
         }
 
         return null;
+    }
+
+    public static List<String> getAllFileNames(final File folder) {
+        List<String> allFiles = new ArrayList<>();
+        saveFileNamesToList(folder, allFiles);
+        return allFiles;
+    }
+
+    //duplicates moment
+    private static void saveFileNamesToList(final File folder, List<String> cache) {
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                saveFileNamesToList(fileEntry, cache);
+                return;
+            };
+
+            cache.add(fileEntry.getName());
+        }
     }
 }
