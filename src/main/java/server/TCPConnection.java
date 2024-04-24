@@ -31,9 +31,17 @@ public class TCPConnection extends Thread {
     public void run() {
         try {
             while(true) {
+                String resp;
                 String data = input.readUTF();
-                String servResponse = server.getParsedResponse(data);
-                output.writeUTF(servResponse);
+
+                if(input.available() > 0) {
+                    resp = server.getParsedResponse(data, input);
+                }
+                else {
+                    resp = server.getParsedResponse(data);
+                }
+
+                output.writeUTF(resp);
                 //System.out.println("Received data:" + data);
             }
         }
