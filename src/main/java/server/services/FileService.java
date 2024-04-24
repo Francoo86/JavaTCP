@@ -3,6 +3,8 @@ package server.services;
 import shd_utils.FileHelpers;
 
 import java.io.*;
+import java.util.List;
+import java.util.Set;
 
 public class FileService {
     private static final int BUFFER_SIZE = 8196;
@@ -39,6 +41,11 @@ public class FileService {
         }
 
         return false;
+    }
+
+    public Set<String> getUploadedFiles() {
+        File directory = new File(UPLOADS);
+        return FileHelpers.getAllFileNames(directory);
     }
 
     public String fileResponse(DataInputStream input, String fileName) {
