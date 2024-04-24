@@ -4,7 +4,9 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FileHelpers {
     public static boolean createDirIfNotExists(String dir) {
@@ -48,14 +50,14 @@ public class FileHelpers {
         return null;
     }
 
-    public static List<String> getAllFileNames(final File folder) {
-        List<String> allFiles = new ArrayList<>();
+    public static Set<String> getAllFileNames(final File folder) {
+        Set<String> allFiles = new HashSet<>();
         saveFileNamesToList(folder, allFiles);
         return allFiles;
     }
 
     //duplicates moment
-    private static void saveFileNamesToList(final File folder, List<String> cache) {
+    private static void saveFileNamesToList(final File folder, Set<String> cache) {
         for (final File fileEntry : folder.listFiles()) {
             if (fileEntry.isDirectory()) {
                 saveFileNamesToList(fileEntry, cache);
