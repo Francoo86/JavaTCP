@@ -3,6 +3,7 @@ package shd_utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,5 +59,24 @@ public class ParseHelpers {
         }
 
         return true;
+    }
+
+    public static String parseSetAsString(String baseMessage, Set<String> data) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append((baseMessage.length() > 0 ? baseMessage + ":" : "") + "\n[");
+
+        int i = 0;
+
+        for(String elem : data){
+            sb.append(elem);
+            if (i < data.size() - 1) {
+                sb.append(", ");
+            }
+            i++;
+        }
+
+        sb.append("]\n");
+        return sb.toString();
     }
 }
