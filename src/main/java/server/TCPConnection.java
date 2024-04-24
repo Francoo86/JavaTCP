@@ -1,17 +1,19 @@
 package server;
 
+import shd_utils.Services;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
 //listener for client?
 public class TCPConnection extends Thread {
     DataInputStream input;
     DataOutputStream output;
     Socket socket;
-    private String response;
     //Coupled ahh thing, thanks deadline!!!!
     private TCPServer server;
     public static final String BAD_DATA = "INVALID_DATA";
@@ -28,21 +30,35 @@ public class TCPConnection extends Thread {
         }
     }
 
+    public void useServices() throws EOFException, IOException {
+        String resp;
+        String data = input.readUTF();
+        System.out.println("Is there more available? " + input.available());
+
+        List<String> info = server.getInfo(data);
+        Services serv = server.getService(info.get(0));
+
+        if(serv == Services.PDF_DOWNLOAD_SERVICE) {
+            resp = server.getParsedResponse(info.get(1), output);
+            output.writeUTF(resp);
+            System.out.println("Response get: " + resp);
+            return;
+        }
+
+        if(input.available() > 0) {
+            resp = server.getParsedResponse(data, input);
+        }
+        else {
+            resp = server.getParsedResponse(data);
+        }
+
+        output.writeUTF(resp);
+    }
+
     public void run() {
         try {
             while(true) {
-                String resp;
-                String data = input.readUTF();
-                System.out.println("Is there more available? " + input.available());
-
-                if(input.available() > 0) {
-                    resp = server.getParsedResponse(data, input);
-                }
-                else {
-                    resp = server.getParsedResponse(data);
-                }
-
-                output.writeUTF(resp);
+                useServices();
                 //System.out.println("Received data:" + data);
             }
         }
