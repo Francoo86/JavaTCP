@@ -79,22 +79,7 @@ public class TCPServer {
         //Mostrar monedas disponibles al usuario.
         if (contents.get(0).equals(CurrencyService.AVAILABLE_COMMAND)){
             Set<String> currencies = currencyService.getAvailableCurrencies();
-            StringBuilder sb = new StringBuilder();
-
-            sb.append("Monedas disponibles:\n[");
-
-            int i = 0;
-
-            for(String currency : currencies){
-                sb.append(currency);
-                if (i < currencies.size() - 1) {
-                    sb.append(", ");
-                }
-                i++;
-            }
-
-            sb.append("]\n");
-            return sb.toString();
+            return ParseHelpers.parseSetAsString("Monedas disponibles", currencies);
         }
 
         String source = contents.get(0).toUpperCase();
@@ -115,6 +100,15 @@ public class TCPServer {
         return String.format("%s en %s equivale a %s en %s ", amount, source, converted, target);
     }
 
+    private String formatPDFLibrary() {
+        Set<String> data = fileService.getUploadedFiles();
+        if(data.size() == 0) {
+            return "No hay archivos en la biblioteca.";
+        }
+
+        return ParseHelpers.parseSetAsString("Archivos obtenidos", data);
+    }
+
     public String handleServices(List<String> contents) {
         Services serv = getService(contents.get(0));
 
@@ -124,6 +118,7 @@ public class TCPServer {
             case SEARCH_WORD -> formatLookupWordResp(contents.get(0));
             case ADD_MEANING -> formatAddDictionary(contents.get(0), contents.get(1));
             case CHANGE_CURRENCY -> formatCurrencyResponse(contents);
+            case PDF_INFO_SERVICE -> formatPDFLibrary();
             default -> "NOT_IMPLEMENTED";
         };
     }
