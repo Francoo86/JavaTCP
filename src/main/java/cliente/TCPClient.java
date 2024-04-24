@@ -47,6 +47,29 @@ public class TCPClient {
         return "";
     }
 
+    //i hate this
+    public String sendInput(String message, File file) {
+        try {
+            //clear the message.
+            message = message.trim();
+
+            System.out.println("SENT DATA: " + message);
+
+            //Sends the request.
+            output.writeUTF(message);
+
+            sendFile(file);
+
+            //if any response
+            return input.readUTF();
+        }
+        catch(IOException e) {
+            System.out.printf("IOError: %s", e);
+        }
+
+        return "";
+    }
+
     public void sendFile(File file) {
         try{
             int bytes;
