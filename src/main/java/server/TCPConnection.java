@@ -33,6 +33,7 @@ public class TCPConnection extends Thread {
             while(true) {
                 String resp;
                 String data = input.readUTF();
+                System.out.println("Is there more available? " + input.available());
 
                 if(input.available() > 0) {
                     resp = server.getParsedResponse(data, input);

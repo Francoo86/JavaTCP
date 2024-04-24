@@ -130,6 +130,7 @@ public class TCPServer {
 
     //overload because its funny to do coupled stuff.
     public String getParsedResponse(String utfData, DataInputStream input) {
+        System.out.println("THE RECEIVED DATA: " + utfData);
         List<String> contents = ParseHelpers.parseContents(utfData);
         Services serv = getService(contents.get(0));
         contents.remove(0);
