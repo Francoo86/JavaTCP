@@ -24,6 +24,7 @@ public class JFileChooserPDF extends JFrame implements ActionListener {
     private JButton acceptBtn;
 
     private File selectedFile;
+    private boolean finishSelection = false;
 
     public JFileChooserPDF() {
         super("Selección de archivo");
@@ -40,6 +41,20 @@ public class JFileChooserPDF extends JFrame implements ActionListener {
         btn = new JButton("Buscar.");
         btn.addActionListener(this);
         add(btn);
+
+        acceptBtn = new JButton("Aceptar");
+        btn.setEnabled(false);
+        add(acceptBtn);
+
+        acceptBtn.addActionListener(e1 -> {
+            // Insert code here
+            setVisible(false);
+            dispose();
+        });
+    }
+
+    public boolean hasFinishedSelection(){
+        return finishSelection;
     }
 
     @Override
@@ -54,6 +69,7 @@ public class JFileChooserPDF extends JFrame implements ActionListener {
 
         if (result == JFileChooser.APPROVE_OPTION) {
             selectedFile = fileChooser.getSelectedFile();
+            txt.setText(selectedFile.getAbsolutePath());
             //return true;
         } else {
             selectedFile = null;
@@ -65,22 +81,12 @@ public class JFileChooserPDF extends JFrame implements ActionListener {
         return selectedFile;
     }
 
-    public boolean isValidFile() {
+    public boolean hasValidFile() {
         return selectedFile != null;
     }
 
-    public void tryToShow() {
-        try {
-            SwingUtilities.invokeAndWait(() -> showWindow());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void showWindow(){
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(HIDE_ON_CLOSE);
         setSize(WIDTH, HEIGHT);
         setVisible(true);
     }
