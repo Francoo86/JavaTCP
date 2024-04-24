@@ -1,21 +1,20 @@
 package server.services;
 
+import shd_utils.FileHelpers;
+
 import java.io.*;
 
 public class FileReceiverService {
     private static final int BUFFER_SIZE = 8196;
     private static final String UPLOADS = "uploads/";
 
-    public void createDirectoryIfNotExists() {
-        File dir = new File(UPLOADS);
-        if(!dir.exists()){
-            dir.mkdir();
-        }
+    public void checkUploads() {
+        FileHelpers.createDirIfNotExists(UPLOADS);
     }
 
     public boolean receiveFile(DataInputStream input, String fileName) {
         try {
-            createDirectoryIfNotExists();
+            checkUploads();
 
             int bytes;
             FileOutputStream fileOutputStream = new FileOutputStream(UPLOADS + fileName);
