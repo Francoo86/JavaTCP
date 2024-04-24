@@ -31,7 +31,8 @@ public class MenuApp {
         System.out.println("3. Cambiar moneda.");
         System.out.println("4. Enviar PDF.");
         System.out.println("5. Descargar PDF.");
-        System.out.println("6. Cerrar programa.");
+        System.out.println("6. Ver archivos disponibles.");
+        System.out.println("7. Cerrar programa.");
     }
 
     private void sendPDF() {
@@ -73,6 +74,13 @@ public class MenuApp {
         System.out.println("Estado del archivo: " + response);
     }
 
+    private void requestPDFLibrary() {
+        System.out.println("Solicitando listado de PDFs.");
+        String content = ParseHelpers.createContents(Services.PDF_INFO_SERVICE, "TEMP");
+        String response = client.sendMessage(content);
+        System.out.println("Datos obtenidos de la biblioteca: " + response);
+    }
+
     private void prepareWordSearch() {
         System.out.println("Introduzca la palabra a buscar:");
         String word = sc.next().trim();
@@ -110,6 +118,23 @@ public class MenuApp {
         String resp = client.sendMessage(content);
 
         System.out.println(resp);
+    }
+
+    private void pdfDownload() {
+        System.out.println("Introduzca el documento PDF a descargar (sin extension)");
+        String pdfName = sc.next().trim();
+
+        if(pdfName.length() == 0) {
+            System.out.println("Ignorando entrada, volviendo al menu...");
+            return;
+        }
+
+        pdfName = pdfName + ".pdf";
+
+        String resp = ParseHelpers.createContents(Services.PDF_DOWNLOAD_SERVICE, pdfName);
+        String content = client.downloadFile(resp, pdfName);
+
+        System.out.println("Datos de la descarga: " + content);
     }
 
     private void prepareCurrencies() {
@@ -170,6 +195,13 @@ public class MenuApp {
                 break;
             case PDF_UPLOAD_SERVICE:
                 sendPDF();
+                break;
+            case PDF_DOWNLOAD_SERVICE:
+                //TODO: Implement.
+                pdfDownload();
+                break;
+            case PDF_INFO_SERVICE:
+                requestPDFLibrary();
                 break;
             //HACK: Add this for avoiding thinking too much.
             case NULL_SERVICE:
