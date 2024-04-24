@@ -5,6 +5,7 @@ import cliente.TCPClient;
 import shd_utils.ParseHelpers;
 import shd_utils.Services;
 
+import java.io.File;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -26,7 +27,37 @@ public class MenuApp {
         System.out.println("1. Buscar una palabra en el diccionario.");
         System.out.println("2. Agregar una palabra al diccionario.");
         System.out.println("3. Cambiar moneda.");
+        System.out.println("4. Enviar PDF.");
+        System.out.println("5. Descargar PDF.");
         System.out.println("4. Cerrar programa.");
+    }
+
+    private void sendPDF() {
+        JFileChooserPDF chooserPDF = new JFileChooserPDF();
+        chooserPDF.showWindow();
+
+        System.out.println("Mostrando pantalla de seleccion de archivos.");
+
+        while(chooserPDF.isVisible()){
+            try {
+                Thread.sleep(1);
+                if(chooserPDF.hasFinishedSelection()) {
+                    break;
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        if (!chooserPDF.hasValidFile()) {
+            System.out.println("El archivo no es válido...");
+            return;
+        }
+
+        File selected = chooserPDF.getFile();
+        String path = selected.getAbsolutePath();
+
+        System.out.println("Datos del archivo: " + path);
     }
 
     private void prepareWordSearch() {
@@ -129,6 +160,7 @@ public class MenuApp {
                 prepareCurrencies();
                 break;
             case PDF_SERVICE:
+                sendPDF();
                 break;
             //HACK: Add this for avoiding thinking too much.
             case NULL_SERVICE:
