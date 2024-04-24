@@ -6,9 +6,11 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import dao.Word;
 import dao.WordDefinition;
+import server.services.FileReceiverService;
 import shd_utils.ParseHelpers;
 import shd_utils.Services;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.*;
 import java.sql.SQLException;
@@ -20,6 +22,7 @@ public class TCPServer {
     //setup services.
     private DictionaryService dictService;
     private CurrencyService currencyService;
+    private FileReceiverService fileReceiverService;
 
     //inmutable ahh array.
     private static final Services[] services = Services.values();
@@ -36,6 +39,7 @@ public class TCPServer {
 
             dictService = new DictionaryService(source);
             currencyService = new CurrencyService();
+            fileReceiverService = new FileReceiverService();
 
             System.out.printf("Setting up server at port %s.\n", port);
         }
@@ -120,7 +124,18 @@ public class TCPServer {
             case SEARCH_WORD -> formatLookupWordResp(contents.get(0));
             case ADD_MEANING -> formatAddDictionary(contents.get(0), contents.get(1));
             case CHANGE_CURRENCY -> formatCurrencyResponse(contents);
-            case PDF_SERVICE -> "TODO";
+            default -> "NOT_IMPLEMENTED";
+        };
+    }
+
+    //overload because its funny to do coupled stuff.
+    public String getParsedResponse(String utfData, DataInputStream input) {
+        List<String> contents = ParseHelpers.parseContents(utfData);
+        Services serv = getService(contents.get(0));
+        contents.remove(0);
+
+        return switch (serv) {
+            case PDF_UPLOAD_SERVICE -> fileReceiverService.fileResponse(input, contents.get(0));
             default -> "NOT_IMPLEMENTED";
         };
     }
