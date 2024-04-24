@@ -29,7 +29,7 @@ public class MenuApp {
         System.out.println("3. Cambiar moneda.");
         System.out.println("4. Enviar PDF.");
         System.out.println("5. Descargar PDF.");
-        System.out.println("4. Cerrar programa.");
+        System.out.println("6. Cerrar programa.");
     }
 
     private void sendPDF() {
@@ -127,10 +127,6 @@ public class MenuApp {
         String resp = client.sendMessage(content);
 
         System.out.println(resp);
-    }
-
-    public void prepareFileInput() {
-        //TODO: Implement.
     }
 
     //you can't return onto while true without breaking it.
