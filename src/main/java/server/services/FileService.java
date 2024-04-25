@@ -46,15 +46,13 @@ public class FileService {
 
     public boolean sendFileToClient(DataOutputStream output, String fileName) {
         try {
-            System.out.println(fileName);
-            String ext = FilenameUtils.getExtension(fileName);
-            File file = FileHelpers.searchFile(UPLOADS, fileName, ext);
+            File file = FileHelpers.searchFile(UPLOADS, fileName);
             if (file == null || !file.exists() || !file.isFile()) {
-                output.writeLong(-1); // Signal that file does not exist
+                output.writeLong(-1);
                 return false;
             }
 
-            output.writeLong(file.length()); // Send file length
+            output.writeLong(file.length());
             FileInputStream fileInputStream = new FileInputStream(file);
             byte[] buffer = new byte[BUFFER_SIZE];
             int bytesRead;

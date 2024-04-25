@@ -22,7 +22,7 @@ public class FileHelpers {
         return fileObj.exists();
     }
 
-    public static File searchFile(String dir, String file, String ext) {
+    public static File searchFile(String dir, String file) {
         final File dirObj = new File(dir);
 
         if(!isValid(dirObj)){
@@ -30,13 +30,13 @@ public class FileHelpers {
             return null;
         }
 
-        return searchFileRecursive(dirObj, file.trim(), ext);
+        return searchFileRecursive(dirObj, file.trim());
     }
 
-    public static File searchFileRecursive(final File folder, String target, String ext) {
+    public static File searchFileRecursive(final File folder, String target) {
         for (final File fileEntry : folder.listFiles()) {
             if (fileEntry.isDirectory()) {
-                return searchFileRecursive(fileEntry, target, ext);
+                return searchFileRecursive(fileEntry, target);
             }
 
             if(fileEntry.getName().equals(target)) {
